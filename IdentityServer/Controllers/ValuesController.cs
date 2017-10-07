@@ -3,12 +3,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using DAL;
 
 namespace IdentityServer.Controllers
 {
     [Route("api/[controller]")]
     public class ValuesController : Controller
     {
+        public XgagDbContext Context { get; }
+
+        public ValuesController(XgagDbContext context)
+        {
+            Context = context;
+        }
+
         // GET api/values
         [HttpGet]
         public IEnumerable<string> Get()
@@ -20,7 +28,7 @@ namespace IdentityServer.Controllers
         [HttpGet("{id}")]
         public string Get(int id)
         {
-            return "value";
+            return Context.Posts.FirstOrDefault(x => x.PostId == id)?.Title;
         }
 
         // POST api/values
