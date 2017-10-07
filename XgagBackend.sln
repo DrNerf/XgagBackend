@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdentityServer", "IdentityS
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DAL", "DAL\DAL.csproj", "{163EED4E-409B-4C29-82FE-3C18F2501BBF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csproj", "{38DF125C-87A4-4404-B697-401825901D3C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{163EED4E-409B-4C29-82FE-3C18F2501BBF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{163EED4E-409B-4C29-82FE-3C18F2501BBF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{163EED4E-409B-4C29-82FE-3C18F2501BBF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{38DF125C-87A4-4404-B697-401825901D3C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{38DF125C-87A4-4404-B697-401825901D3C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{38DF125C-87A4-4404-B697-401825901D3C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{38DF125C-87A4-4404-B697-401825901D3C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -11,6 +11,7 @@ using Microsoft.Extensions.Options;
 using DAL;
 using Microsoft.EntityFrameworkCore;
 using Swashbuckle.AspNetCore.Swagger;
+using AutoMapper;
 
 namespace IdentityServer
 {
@@ -36,6 +37,8 @@ namespace IdentityServer
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
+            services.AddAutoMapper(typeof(MappingProfile));
+            services.AddTransient<ICryptoService>(sp => new CryptoService());
 
             services.AddDbContext<XgagDbContext>(
                 options => options.UseSqlServer(Configuration.GetConnectionString("XgagDbContext")));
