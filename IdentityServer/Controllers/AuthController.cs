@@ -1,9 +1,10 @@
-﻿using AutoMapper;
+﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
+using AutoMapper;
 using Common;
 using DAL;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Linq;
 
 namespace IdentityServer
 {
@@ -27,7 +28,7 @@ namespace IdentityServer
 
         [HttpPost]
         [Produces(typeof(UserModel))]
-        public IActionResult Login([FromBody]LoginRequest request)
+        public async Task<IActionResult> Login([FromBody]LoginRequest request)
         {
             if (string.IsNullOrEmpty(request.Username))
             {
@@ -40,10 +41,10 @@ namespace IdentityServer
             }
 
             var user = DbContext.AspNetUsers.FirstOrDefault(
-                u => u.UserName.Equals(request.Username, StringComparison.OrdinalIgnoreCase));
+                u => u.UserName == request.Username);
             if (user == null)
             {
-                return NotFound();
+                return Unauthorized();
             }
 
             if (!CryptoService.VerifyHashedPassword(user.PasswordHash, request.Password))
@@ -51,7 +52,44 @@ namespace IdentityServer
                 return Unauthorized();
             }
 
+            var token = Guid.NewGuid();
+            user.ApiSessionToken = token;
+            await DbContext.SaveChangesAsync();
             return Ok(AutoMapper.Map<UserModel>(user));
+        }
+
+        [HttpGet]
+        [Produces(typeof(UserModel))]
+        public IActionResult VerifyToken([FromHeader]string SessionToken)
+        {
+            if (string.IsNullOrEmpty(SessionToken))
+            {
+                return BadRequest();
+            }
+
+            Guid sessionTokenGuid;
+            if (!Guid.TryParse(SessionToken, out sessionTokenGuid))
+            {
+                return BadRequest();
+            }
+            
+            var user = DbContext.AspNetUsers.FirstOrDefault(u => u.ApiSessionToken == sessionTokenGuid);
+            if (user == null)
+            {
+                return Unauthorized();
+            }
+
+            return Ok(AutoMapper.Map<UserModel>(user));
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
+
+            if (disposing)
+            {
+                DbContext.Dispose();
+            }
         }
     }
 }
