@@ -4,7 +4,7 @@ using System.Security.Cryptography;
 
 namespace IdentityServer
 {
-    public class CryptoService : ICryptoService
+    internal class CryptoService : ICryptoService
     {
         public string HashPassword(string password)
         {

@@ -8,24 +8,39 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace IdentityServer
 {
+    /// <summary>
+    /// Authentication controller.
+    /// </summary>
+    /// <seealso cref="Controller" />
     [Produces("application/json")]
     [Route("api/Auth")]
     public class AuthController : Controller
     {
-        public ICryptoService CryptoService { get; }
-        public XgagDbContext DbContext { get; }
-        public IMapper AutoMapper { get; }
+        private readonly ICryptoService m_CryptoService;
+        private readonly XgagDbContext m_DbContext;
+        private readonly IMapper m_AutoMapper;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AuthController"/> class.
+        /// </summary>
+        /// <param name="dbContext">The database context.</param>
+        /// <param name="cryptoService">The crypto service.</param>
+        /// <param name="autoMapper">The automatic mapper.</param>
         public AuthController(
             XgagDbContext dbContext,
             ICryptoService cryptoService,
             IMapper autoMapper)
         {
-            CryptoService = cryptoService;
-            DbContext = dbContext;
-            AutoMapper = autoMapper;
+            m_CryptoService = cryptoService;
+            m_DbContext = dbContext;
+            m_AutoMapper = autoMapper;
         }
 
+        /// <summary>
+        /// Logins the specified request.
+        /// </summary>
+        /// <param name="request">The request.</param>
+        /// <returns>The user.</returns>
         [HttpPost]
         [Produces(typeof(UserModel))]
         public async Task<IActionResult> Login([FromBody]LoginRequest request)
@@ -40,24 +55,29 @@ namespace IdentityServer
                 return BadRequest();
             }
 
-            var user = DbContext.AspNetUsers.FirstOrDefault(
+            var user = m_DbContext.AspNetUsers.FirstOrDefault(
                 u => u.UserName == request.Username);
             if (user == null)
             {
                 return Unauthorized();
             }
 
-            if (!CryptoService.VerifyHashedPassword(user.PasswordHash, request.Password))
+            if (!m_CryptoService.VerifyHashedPassword(user.PasswordHash, request.Password))
             {
                 return Unauthorized();
             }
 
             var token = Guid.NewGuid();
             user.ApiSessionToken = token;
-            await DbContext.SaveChangesAsync();
-            return Ok(AutoMapper.Map<UserModel>(user));
+            await m_DbContext.SaveChangesAsync();
+            return Ok(m_AutoMapper.Map<UserModel>(user));
         }
 
+        /// <summary>
+        /// Verifies the token.
+        /// </summary>
+        /// <param name="SessionToken">The session token.</param>
+        /// <returns>The user.</returns>
         [HttpGet]
         [Produces(typeof(UserModel))]
         public IActionResult VerifyToken([FromHeader]string SessionToken)
@@ -73,22 +93,60 @@ namespace IdentityServer
                 return BadRequest();
             }
             
-            var user = DbContext.AspNetUsers.FirstOrDefault(u => u.ApiSessionToken == sessionTokenGuid);
+            var user = m_DbContext.AspNetUsers.FirstOrDefault(u => u.ApiSessionToken == sessionTokenGuid);
             if (user == null)
             {
                 return Unauthorized();
             }
 
-            return Ok(AutoMapper.Map<UserModel>(user));
+            return Ok(m_AutoMapper.Map<UserModel>(user));
         }
 
+        /// <summary>
+        /// Logs out the specified session token.
+        /// </summary>
+        /// <param name="SessionToken">The session token.</param>
+        /// <returns>OK if the operation is successful.</returns>
+        [HttpDelete]
+        public async Task<IActionResult> Logout([FromHeader]string SessionToken)
+        {
+            if (string.IsNullOrEmpty(SessionToken))
+            {
+                return BadRequest();
+            }
+
+            Guid sessionTokenGuid;
+            if (!Guid.TryParse(SessionToken, out sessionTokenGuid))
+            {
+                return BadRequest();
+            }
+
+            var user = m_DbContext.AspNetUsers.FirstOrDefault(u => u.ApiSessionToken == sessionTokenGuid);
+            if (user == null)
+            {
+                return BadRequest();
+            }
+            else
+            {
+                user.ApiSessionToken = default(Guid?);
+                await m_DbContext.SaveChangesAsync();
+            }
+
+            return Ok();
+        }
+
+        /// <summary>
+        /// Releases all resources currently used by this <see cref="T:Microsoft.AspNetCore.Mvc.Controller" /> instance.
+        /// </summary>
+        /// <param name="disposing"><c>true</c> if this method is being invoked by the <see cref="M:Microsoft.AspNetCore.Mvc.Controller.Dispose" /> method,
+        /// otherwise <c>false</c>.</param>
         protected override void Dispose(bool disposing)
         {
             base.Dispose(disposing);
 
             if (disposing)
             {
-                DbContext.Dispose();
+                m_DbContext.Dispose();
             }
         }
     }
