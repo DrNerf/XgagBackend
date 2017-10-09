@@ -1,13 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26730.12
+VisualStudioVersion = 15.0.26730.16
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdentityServer", "IdentityServer\IdentityServer.csproj", "{4F921B68-DE2B-4BC9-AD32-C36DC8BAF8CA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IdentityServer", "IdentityServer\IdentityServer.csproj", "{4F921B68-DE2B-4BC9-AD32-C36DC8BAF8CA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DAL", "DAL\DAL.csproj", "{163EED4E-409B-4C29-82FE-3C18F2501BBF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DAL", "DAL\DAL.csproj", "{163EED4E-409B-4C29-82FE-3C18F2501BBF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csproj", "{38DF125C-87A4-4404-B697-401825901D3C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common", "Common\Common.csproj", "{38DF125C-87A4-4404-B697-401825901D3C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PostsServer", "PostsServer\PostsServer.csproj", "{E9779048-3142-4D08-A525-A85F1034E90E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,10 @@ Global
 		{38DF125C-87A4-4404-B697-401825901D3C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{38DF125C-87A4-4404-B697-401825901D3C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{38DF125C-87A4-4404-B697-401825901D3C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E9779048-3142-4D08-A525-A85F1034E90E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E9779048-3142-4D08-A525-A85F1034E90E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E9779048-3142-4D08-A525-A85F1034E90E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E9779048-3142-4D08-A525-A85F1034E90E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
