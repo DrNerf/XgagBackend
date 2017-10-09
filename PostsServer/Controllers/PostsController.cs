@@ -5,26 +5,39 @@ using Common;
 using DAL;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace PostsServer.Controllers
 {
     [Produces("application/json")]
     [Route("api/Posts")]
-    [ServiceFilter(typeof(AuthorizeAttribute))]
+    //[ServiceFilter(typeof(AuthorizeAttribute))]
     public class PostsController : Controller
     {
         private readonly XgagDbContext m_Context;
+        private readonly IConfiguration m_Configuration;
+        private readonly int m_PageSize;
 
-        public PostsController(XgagDbContext context)
+        public PostsController(
+            XgagDbContext context,
+            IConfiguration configuration)
         {
             m_Context = context;
+            m_Configuration = configuration;
+            m_PageSize = m_Configuration.GetValue<int>("PostsPageSize");
         }
 
         // GET: api/Posts
         [HttpGet]
-        public IEnumerable<Post> GetPosts([FromHeader]string SessionToken)
+        public IEnumerable<Post> GetPosts(
+            [FromHeader]string SessionToken,
+            [FromQuery]int page = 1)
         {
-            return m_Context.Posts.ToList();
+            return m_Context.Posts
+                .OrderByDescending(p => p.DateCreated)
+                .Skip(m_PageSize * (page - 1))
+                .Take(m_PageSize)
+                .ToList();
         }
 
         // GET: api/Posts/5

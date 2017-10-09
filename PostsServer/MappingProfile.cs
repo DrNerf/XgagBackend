@@ -6,20 +6,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace IdentityServer
+namespace PostsServer
 {
     internal class MappingProfile : Profile
     {
         public MappingProfile()
-            : this(string.Empty)
         {
-        }
-
-        public MappingProfile(string profileName) 
-            : base(profileName)
-        {
-            CreateMap<AspNetUser, UserModel>()
-                .ReverseMap();
+            CreateMap<Post, PostModel>()
+                .ForMember(m => m.ImageUrl, (m) => 
+                {
+                    
+                });
         }
     }
 }
