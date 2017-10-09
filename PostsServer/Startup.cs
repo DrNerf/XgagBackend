@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Swashbuckle.AspNetCore.Swagger;
 using DAL;
+using Common;
 
 namespace PostsServer
 {
@@ -13,7 +14,8 @@ namespace PostsServer
         {
             var builder = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)
-                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                .AddJsonFile("commonsettings.json", optional: false, reloadOnChange: true);
             if (env.IsDevelopment())
             {
                 builder.AddUserSecrets<Startup>();
@@ -29,6 +31,8 @@ namespace PostsServer
         {
             services.AddMvc();
             services.AddXgagDbContext(Configuration);
+            services.AddCommonConfigurationOptions(Configuration);
+            services.AddActionFilters();
 
             services.AddSwaggerGen(c =>
             {

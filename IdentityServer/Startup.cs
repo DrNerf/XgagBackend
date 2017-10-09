@@ -1,17 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using AutoMapper;
+using Common;
+using DAL;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using DAL;
-using Microsoft.EntityFrameworkCore;
 using Swashbuckle.AspNetCore.Swagger;
-using AutoMapper;
 
 namespace IdentityServer
 {
@@ -22,7 +16,8 @@ namespace IdentityServer
         {
             var builder = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)
-                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                .AddJsonFile("commonsettings.json", optional: false, reloadOnChange: true);
             if (env.IsDevelopment())
             {
                 builder.AddUserSecrets<Startup>();
@@ -39,6 +34,7 @@ namespace IdentityServer
             services.AddMvc();
             services.AddAutoMapper(typeof(MappingProfile));
             services.AddXgagDbContext(Configuration);
+            services.AddCommonConfigurationOptions(Configuration);
 
             services.AddTransient<ICryptoService>(sp => new CryptoService());
 
