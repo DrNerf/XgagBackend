@@ -38,6 +38,8 @@ namespace PostsServer
             [FromQuery]int page = 1)
         {
             var result = m_Context.Posts
+                .Include(p => p.ImageImage)
+                .Include(p => p.Votes)
                 .OrderByDescending(p => p.DateCreated)
                 .Skip(m_PageSize * (page - 1))
                 .Take(m_PageSize)

@@ -20,10 +20,10 @@ namespace DAL
         public string YouTubeLink { get; set; }
         public bool? IsNsfw { get; set; }
 
-        public Image ImageImage { get; set; }
-        public AspNetUser Owner { get; set; }
-        public ICollection<Comment> Comments { get; set; }
-        public ICollection<PostOfTheDay> PostOfTheDays { get; set; }
-        public ICollection<Vote> Votes { get; set; }
+        public virtual Image ImageImage { get; set; }
+        public virtual AspNetUser Owner { get; set; }
+        public virtual ICollection<Comment> Comments { get; set; }
+        public virtual ICollection<PostOfTheDay> PostOfTheDays { get; set; }
+        public virtual ICollection<Vote> Votes { get; set; }
     }
 }
