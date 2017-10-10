@@ -6,6 +6,8 @@ using Swashbuckle.AspNetCore.Swagger;
 using DAL;
 using Common;
 using AutoMapper;
+using System.Linq;
+using Microsoft.Extensions.Options;
 
 namespace PostsServer
 {
@@ -35,7 +37,9 @@ namespace PostsServer
             services.AddCommonConfigurationOptions(Configuration);
             services.AddActionFilters();
 
-            MappingProfile.PostsServerAddress = Configuration[ServersKeys.PostsServer];
+            var serversConfig = new ServersAddressesModel();
+            Configuration.Bind(serversConfig);
+            MappingProfile.PostsServerAddress = serversConfig.PostsServerAddress;
             services.AddAutoMapper(typeof(MappingProfile));
 
             services.AddSwaggerGen(c =>
