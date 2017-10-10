@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Swashbuckle.AspNetCore.Swagger;
 using DAL;
 using Common;
+using AutoMapper;
 
 namespace PostsServer
 {
@@ -33,6 +34,9 @@ namespace PostsServer
             services.AddXgagDbContext(Configuration);
             services.AddCommonConfigurationOptions(Configuration);
             services.AddActionFilters();
+
+            MappingProfile.PostsServerAddress = Configuration[ServersKeys.PostsServer];
+            services.AddAutoMapper(typeof(MappingProfile));
 
             services.AddSwaggerGen(c =>
             {

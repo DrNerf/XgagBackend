@@ -6,8 +6,9 @@ using DAL;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using AutoMapper;
 
-namespace PostsServer.Controllers
+namespace PostsServer
 {
     [Produces("application/json")]
     [Route("api/Posts")]
@@ -15,29 +16,33 @@ namespace PostsServer.Controllers
     public class PostsController : Controller
     {
         private readonly XgagDbContext m_Context;
+        private readonly IMapper m_Mapper;
         private readonly IConfiguration m_Configuration;
         private readonly int m_PageSize;
 
         public PostsController(
             XgagDbContext context,
-            IConfiguration configuration)
+            IConfiguration configuration,
+            IMapper mapper)
         {
             m_Context = context;
+            m_Mapper = mapper;
             m_Configuration = configuration;
             m_PageSize = m_Configuration.GetValue<int>("PostsPageSize");
         }
 
         // GET: api/Posts
         [HttpGet]
-        public IEnumerable<Post> GetPosts(
+        public IEnumerable<PostModel> GetPosts(
             [FromHeader]string SessionToken,
             [FromQuery]int page = 1)
         {
-            return m_Context.Posts
+            var result = m_Context.Posts
                 .OrderByDescending(p => p.DateCreated)
                 .Skip(m_PageSize * (page - 1))
                 .Take(m_PageSize)
                 .ToList();
+            return m_Mapper.Map<IEnumerable<PostModel>>(result);
         }
 
         // GET: api/Posts/5
@@ -58,7 +63,7 @@ namespace PostsServer.Controllers
                 return NotFound();
             }
 
-            return Ok(post);
+            return Ok(m_Mapper.Map<PostModel>(post));
         }
 
         // PUT: api/Posts/5
@@ -136,7 +141,7 @@ namespace PostsServer.Controllers
             m_Context.Posts.Remove(post);
             await m_Context.SaveChangesAsync();
 
-            return Ok(post);
+            return Ok(m_Mapper.Map<PostModel>(post));
         }
 
         private bool PostExists(int id)
