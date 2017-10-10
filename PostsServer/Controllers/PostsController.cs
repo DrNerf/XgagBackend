@@ -58,7 +58,10 @@ namespace PostsServer
                 return BadRequest(ModelState);
             }
 
-            var post = await m_Context.Posts.SingleOrDefaultAsync(m => m.PostId == id);
+            var post = await m_Context.Posts
+                .Include(p => p.ImageImage)
+                .Include(p => p.Votes)
+                .SingleOrDefaultAsync(m => m.PostId == id);
 
             if (post == null)
             {
