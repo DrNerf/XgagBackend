@@ -5,7 +5,7 @@ using System.Linq;
 namespace PostsServer
 {
     [Produces("application/json")]
-    [Route("api/Posts")]
+    [Route("api/Images")]
     public class ImagesController : Controller
     {
         private readonly XgagDbContext m_DbContext;
