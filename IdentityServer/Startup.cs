@@ -3,6 +3,8 @@ using Common;
 using DAL;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Cors.Internal;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Swashbuckle.AspNetCore.Swagger;
@@ -32,6 +34,14 @@ namespace IdentityServer
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
+            services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicy",
+                    builder => builder.AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .AllowCredentials());
+            });
             services.AddAutoMapper(typeof(MappingProfile));
             services.AddXgagDbContext(Configuration);
             services.AddCommonConfigurationOptions(Configuration);
@@ -59,6 +69,8 @@ namespace IdentityServer
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Xgag Identity API");
             });
+
+            app.UseCors("CorsPolicy");
 
             app.UseMvc();
         }
