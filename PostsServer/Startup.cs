@@ -33,6 +33,14 @@ namespace PostsServer
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
+            services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicy",
+                    builder => builder.AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .AllowCredentials());
+            });
             services.AddXgagDbContext(Configuration);
             services.AddCommonConfigurationOptions(Configuration);
             services.AddActionFilters();
@@ -64,6 +72,7 @@ namespace PostsServer
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Xgag Posts API");
             });
 
+            app.UseCors("CorsPolicy");
             app.UseMvc();
         }
     }
