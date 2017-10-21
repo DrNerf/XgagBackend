@@ -16,8 +16,5 @@ namespace Common
 
         [JsonProperty(PropertyName = "profilePictureUrl")]
         public string ProfilePictureUrl { get; set; }
-
-        [JsonProperty(PropertyName = "apiSessionToken")]
-        public Guid? ApiSessionToken { get; set; }
     }
 }

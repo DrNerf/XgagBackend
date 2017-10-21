@@ -5,6 +5,9 @@ using AutoMapper;
 using Common;
 using DAL;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.Http;
 
 namespace IdentityServer
 {
@@ -19,6 +22,7 @@ namespace IdentityServer
         private readonly ICryptoService m_CryptoService;
         private readonly XgagDbContext m_DbContext;
         private readonly IMapper m_AutoMapper;
+        private readonly CommonConfigModel m_Configuration;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AuthController"/> class.
@@ -29,11 +33,13 @@ namespace IdentityServer
         public AuthController(
             XgagDbContext dbContext,
             ICryptoService cryptoService,
-            IMapper autoMapper)
+            IMapper autoMapper,
+            IOptions<CommonConfigModel> configuration)
         {
             m_CryptoService = cryptoService;
             m_DbContext = dbContext;
             m_AutoMapper = autoMapper;
+            m_Configuration = configuration.Value;
         }
 
         /// <summary>
@@ -70,6 +76,10 @@ namespace IdentityServer
             var token = Guid.NewGuid();
             user.ApiSessionToken = token;
             await m_DbContext.SaveChangesAsync();
+            Response.Cookies.Append(
+                m_Configuration.SessionCookieKey,
+                token.ToString(),
+                new CookieOptions() { HttpOnly = true });
             return Ok(m_AutoMapper.Map<UserModel>(user));
         }
 
@@ -80,15 +90,22 @@ namespace IdentityServer
         /// <returns>The user.</returns>
         [HttpGet]
         [Produces(typeof(UserModel))]
-        public IActionResult VerifyToken([FromHeader]string SessionToken)
+        public IActionResult VerifyToken()
         {
-            if (string.IsNullOrEmpty(SessionToken))
+            if (!Request.Cookies.TryGetValue(
+                m_Configuration.SessionCookieKey,
+                out var sessionToken))
+            {
+                return Unauthorized();
+            }
+
+            if (string.IsNullOrEmpty(sessionToken))
             {
                 return BadRequest();
             }
 
             Guid sessionTokenGuid;
-            if (!Guid.TryParse(SessionToken, out sessionTokenGuid))
+            if (!Guid.TryParse(sessionToken, out sessionTokenGuid))
             {
                 return BadRequest();
             }
@@ -108,15 +125,22 @@ namespace IdentityServer
         /// <param name="SessionToken">The session token.</param>
         /// <returns>OK if the operation is successful.</returns>
         [HttpDelete]
-        public async Task<IActionResult> Logout([FromHeader]string SessionToken)
+        public async Task<IActionResult> Logout()
         {
-            if (string.IsNullOrEmpty(SessionToken))
+            if (!Request.Cookies.TryGetValue(
+                m_Configuration.SessionCookieKey,
+                out var sessionToken))
+            {
+                return Unauthorized();
+            }
+
+            if (string.IsNullOrEmpty(sessionToken))
             {
                 return BadRequest();
             }
 
             Guid sessionTokenGuid;
-            if (!Guid.TryParse(SessionToken, out sessionTokenGuid))
+            if (!Guid.TryParse(sessionToken, out sessionTokenGuid))
             {
                 return BadRequest();
             }

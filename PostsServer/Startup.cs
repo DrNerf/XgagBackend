@@ -45,9 +45,9 @@ namespace PostsServer
             services.AddCommonConfigurationOptions(Configuration);
             services.AddActionFilters();
 
-            var serversConfig = new ServersAddressesModel();
-            Configuration.Bind(serversConfig);
-            MappingProfile.PostsServerAddress = serversConfig.PostsServerAddress;
+            var commonConfig = new CommonConfigModel();
+            Configuration.Bind(commonConfig);
+            MappingProfile.PostsServerAddress = commonConfig.PostsServerAddress;
             services.AddAutoMapper(typeof(MappingProfile));
 
             services.AddSwaggerGen(c =>

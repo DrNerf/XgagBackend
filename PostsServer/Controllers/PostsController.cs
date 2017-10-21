@@ -12,7 +12,7 @@ namespace PostsServer
 {
     [Produces("application/json")]
     [Route("api/Posts")]
-    //[ServiceFilter(typeof(AuthorizeAttribute))]
+    [ServiceFilter(typeof(AuthorizeAttribute))]
     public class PostsController : Controller
     {
         private readonly XgagDbContext m_Context;

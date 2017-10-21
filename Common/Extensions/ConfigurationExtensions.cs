@@ -9,7 +9,7 @@ namespace Common
             this IServiceCollection services,
             IConfiguration configuration)
         {
-            services.Configure<ServersAddressesModel>(configuration);
+            services.Configure<CommonConfigModel>(configuration);
         }
 
         public static void AddActionFilters(this IServiceCollection services)

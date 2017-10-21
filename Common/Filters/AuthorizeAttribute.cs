@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using System.Net;
 
 namespace Common
 {
@@ -14,13 +15,11 @@ namespace Common
     /// <seealso cref="ResultFilterAttribute" />
     public class AuthorizeAttribute : ActionFilterAttribute
     {
-        private const string SessionTokenKey = "SessionToken";
+        private CommonConfigModel m_Configuration;
 
-        private ServersAddressesModel m_ServersAddresses;
-
-        public AuthorizeAttribute(IOptions<ServersAddressesModel> serverAddressesOptions)
+        public AuthorizeAttribute(IOptions<CommonConfigModel> serverAddressesOptions)
         {
-            m_ServersAddresses = serverAddressesOptions.Value;
+            m_Configuration = serverAddressesOptions.Value;
         }
 
         public override async Task OnActionExecutionAsync(
@@ -29,32 +28,30 @@ namespace Common
         {
             base.OnActionExecuting(context);
 
-            if (context.HttpContext.Request.Headers.TryGetValue(
-                SessionTokenKey,
-                out var headers))
+            if (context.HttpContext.Request.Cookies.TryGetValue(
+                m_Configuration.SessionCookieKey,
+                out var token))
             {
-                if (!headers.Any())
+                var cookieContainer = new CookieContainer();
+                using (var handler = new HttpClientHandler() { CookieContainer = cookieContainer })
                 {
-                    context.Result = new UnauthorizedResult();
-                }
-
-                var token = headers.First();
-                using (var client = new HttpClient())
-                {
-                    client.DefaultRequestHeaders.Add(SessionTokenKey, token);
-                    var identityServerAddress = m_ServersAddresses.IdentityServerAddress;
-                    var response = await client.GetAsync($"{identityServerAddress}/api/auth");
-                    if (response.IsSuccessStatusCode)
+                    using (var client = new HttpClient(handler))
                     {
-                        var result = await response.Content.ReadAsStringAsync();
-                        var userData = JsonConvert.DeserializeObject<UserModel>(result);
-                        context.HttpContext.Items[HttpContextKeys.UserData] = userData;
-                        context.Result = (await next())?.Result;
-                    }
-                    else
-                    {
-                        context.Result = new UnauthorizedResult();
-                    }
+                        cookieContainer.Add(new Cookie(m_Configuration.SessionCookieKey, token));
+                        var identityServerAddress = m_Configuration.IdentityServerAddress;
+                        var response = await client.GetAsync($"{identityServerAddress}/api/auth");
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var result = await response.Content.ReadAsStringAsync();
+                            var userData = JsonConvert.DeserializeObject<UserModel>(result);
+                            context.HttpContext.Items[HttpContextKeys.UserData] = userData;
+                            context.Result = (await next())?.Result;
+                        }
+                        else
+                        {
+                            context.Result = new UnauthorizedResult();
+                        }
+                    } 
                 }
             }
             else
