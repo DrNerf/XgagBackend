@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -12,6 +13,14 @@ namespace DAL
         {
             services.AddDbContext<XgagDbContext>(
                 options => options.UseSqlServer(configuration.GetConnectionString("XgagDbContext")));
+
+            RegisterRepositories(services);
+        }
+
+        private static void RegisterRepositories(
+            IServiceCollection services)
+        {
+            services.AddTransient<IRepository<Post>, Repository<Post>>();
         }
     }
 }

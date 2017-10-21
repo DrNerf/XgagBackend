@@ -1,4 +1,5 @@
 ﻿{
+  "SessionCookieKey":  "SessionToken",
   "IdentityServerAddress": "http://localhost:52433",
   "PostsServerAddress": "http://localhost:52763"
 }
