@@ -8,6 +8,7 @@ using Common;
 using AutoMapper;
 using System.Linq;
 using Microsoft.Extensions.Options;
+using ServiceLayer;
 
 namespace PostsServer
 {
@@ -44,6 +45,7 @@ namespace PostsServer
             services.AddXgagDbContext(Configuration);
             services.AddCommonConfigurationOptions(Configuration);
             services.AddActionFilters();
+            services.AddServices();
 
             var commonConfig = new CommonConfigModel();
             Configuration.Bind(commonConfig);
