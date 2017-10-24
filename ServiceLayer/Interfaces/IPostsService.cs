@@ -5,6 +5,8 @@ namespace ServiceLayer
 {
     public interface IPostsService : IServiceBase
     {
-        IEnumerable<PostModel> GetPostsByPage(int page);
+        IEnumerable<PostModel> GetByPage(int page);
+
+        PostRichModel GetById(int id);
     }
 }

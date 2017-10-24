@@ -12,6 +12,8 @@ namespace PostsServer
 
         public MappingProfile()
         {
+            CommonMappingProfile.AddIdentityMaps(this);
+
             CreateMap<Post, PostModel>()
                 .ForMember(
                     m => m.ImageUrl,
@@ -31,6 +33,16 @@ namespace PostsServer
                 .ForMember(
                     m => m.HasNewComments,
                     m => m.MapFrom(p => p.Comments.Any(c => c.DateTimePosted.Date == DateTime.Now.Date)));
+
+            CreateMap<Comment, CommentModel>()
+                .ForMember(
+                    m => m.DateTimePostedTicks, 
+                    m => m.MapFrom(c => c.DateTimePosted.GetJSTimeStamp()))
+                .ForMember(
+                    m => m.SubComments,
+                    m => m.MapFrom(c => c.InverseParentComment));
+
+            CreateMap<Post, PostRichModel>();
         }
     }
 }

@@ -7,7 +7,7 @@ namespace DAL
     public interface IRepository<TEntity> : IDisposable
         where TEntity : class
     {
-        IQueryable<TEntity> GetAll();
+        IQueryable<TEntity> Get();
         void Add(TEntity entity);
         void Delete(TEntity entity);
         void Update(TEntity entity);

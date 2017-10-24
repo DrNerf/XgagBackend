@@ -18,8 +18,7 @@ namespace IdentityServer
         public MappingProfile(string profileName) 
             : base(profileName)
         {
-            CreateMap<AspNetUser, UserModel>()
-                .ReverseMap();
+            CommonMappingProfile.AddIdentityMaps(this);
         }
     }
 }

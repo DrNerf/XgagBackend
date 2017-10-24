@@ -21,11 +21,35 @@ namespace ServiceLayer
             m_PageSize = configuration.GetValue<int>("PostsPageSize");
         }
 
-        public IEnumerable<PostModel> GetPostsByPage(int page)
+        public PostRichModel GetById(int id)
+        {
+            var result = default(PostRichModel);
+            try
+            {
+                var post = Repository.Get()
+                    .Include(p => p.ImageImage)
+                    .Include(p => p.Votes)
+                    .Include(p => p.Comments)
+                    .Include(p => p.Comments)
+                        .ThenInclude(c => c.Owner)
+                    .First(p => p.PostId == id);
+                result = Mapper.Map<PostRichModel>(post);
+            }
+            catch (Exception ex)
+            {
+
+                Logger.LogError(ex, $"Could not retrieve post with id: {id}.");
+                result = null;
+            }
+            
+            return result;
+        }
+
+        public IEnumerable<PostModel> GetByPage(int page)
         {
             try
             {
-                var result = Repository.GetAll()
+                var result = Repository.Get()
                         .Include(p => p.ImageImage)
                         .Include(p => p.Votes)
                         .Include(p => p.Comments)

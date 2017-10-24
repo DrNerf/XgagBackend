@@ -26,7 +26,7 @@ namespace DAL
             m_DbSet.Remove(entity);
         }
 
-        public IQueryable<TEntity> GetAll()
+        public IQueryable<TEntity> Get()
         {
             return m_DbSet.AsQueryable();
         }

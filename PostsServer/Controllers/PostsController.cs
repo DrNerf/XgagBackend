@@ -29,42 +29,36 @@ namespace PostsServer
         public IEnumerable<PostModel> GetPosts(
             [FromQuery]int page = 1)
         {
-            return m_PostsService.GetPostsByPage(page);
+            return m_PostsService.GetByPage(page);
+        }
+
+        //GET: api/Posts/5
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetPost(
+            [FromRoute] int id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var post = m_PostsService.GetById(id);
+            if (post == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(post);
         }
 
         protected override void Dispose(bool disposing)
         {
             base.Dispose(disposing);
-
             if (disposing)
             {
                 m_PostsService.Dispose();
             }
         }
-
-        // GET: api/Posts/5
-        //[HttpGet("{id}")]
-        //public async Task<IActionResult> GetPost(
-        //    [FromRoute] int id,
-        //    [FromHeader]string SessionToken)
-        //{
-        //    if (!ModelState.IsValid)
-        //    {
-        //        return BadRequest(ModelState);
-        //    }
-
-        //    var post = await m_Context.Posts
-        //        .Include(p => p.ImageImage)
-        //        .Include(p => p.Votes)
-        //        .SingleOrDefaultAsync(m => m.PostId == id);
-
-        //    if (post == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    return Ok(m_Mapper.Map<PostModel>(post));
-        //}
 
         //// PUT: api/Posts/5
         //[HttpPut("{id}")]
