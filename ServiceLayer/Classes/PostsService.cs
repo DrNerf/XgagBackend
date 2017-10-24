@@ -28,12 +28,12 @@ namespace ServiceLayer
                 var result = Repository.GetAll()
                         .Include(p => p.ImageImage)
                         .Include(p => p.Votes)
+                        .Include(p => p.Comments)
                         .OrderByDescending(p => p.DateCreated)
                         .Skip(m_PageSize * (page - 1))
-                        .Take(m_PageSize)
-                        .ToList();
+                        .Take(m_PageSize);
 
-                return Mapper.Map<IEnumerable<PostModel>>(result);
+                return Mapper.Map<IList<PostModel>>(result);
             }
             catch (Exception ex)
             {

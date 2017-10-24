@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Common;
 using DAL;
+using System;
 using System.Linq;
 
 namespace PostsServer
@@ -15,9 +16,21 @@ namespace PostsServer
                 .ForMember(
                     m => m.ImageUrl,
                     m => m.MapFrom(p => $"{PostsServerAddress}/api/Images/{p.ImageImageId}.jpg"))
-                .ForMember(m => m.DateCreatedTicks, m => m.MapFrom(p => p.DateCreated.Ticks))
-                .ForMember(m => m.IsYoutubePost, m => m.MapFrom(p => p.ImageImage == null))
-                .ForMember(m => m.Score, m => m.MapFrom(p => p.Votes.Sum(v => v.Type)));
+                .ForMember(
+                    m => m.DateCreatedTicks,
+                    m => m.MapFrom(p => p.DateCreated.GetJSTimeStamp()))
+                .ForMember(
+                    m => m.IsYoutubePost,
+                    m => m.MapFrom(p => p.ImageImage == null))
+                .ForMember(
+                    m => m.Score,
+                    m => m.MapFrom(p => p.Votes.Sum(v => v.Type)))
+                .ForMember(
+                    m => m.CommentsCount,
+                    m => m.MapFrom(p => p.Comments.Count()))
+                .ForMember(
+                    m => m.HasNewComments,
+                    m => m.MapFrom(p => p.Comments.Any(c => c.DateTimePosted.Date == DateTime.Now.Date)));
         }
     }
 }
