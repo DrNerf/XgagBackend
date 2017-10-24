@@ -41,5 +41,10 @@ namespace DAL
         {
             return m_DbContext.SaveChangesAsync();
         }
+
+        public void Dispose()
+        {
+            m_DbContext.Dispose();
+        }
     }
 }

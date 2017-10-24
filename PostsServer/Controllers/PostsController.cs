@@ -32,6 +32,16 @@ namespace PostsServer
             return m_PostsService.GetPostsByPage(page);
         }
 
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
+
+            if (disposing)
+            {
+                m_PostsService.Dispose();
+            }
+        }
+
         // GET: api/Posts/5
         //[HttpGet("{id}")]
         //public async Task<IActionResult> GetPost(

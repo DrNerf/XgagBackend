@@ -5,7 +5,8 @@ using System;
 
 namespace ServiceLayer
 {
-    internal class ServiceBase<TEntity> where TEntity : class
+    internal class ServiceBase<TEntity> : IServiceBase
+        where TEntity : class
     {
         protected IRepository<TEntity> Repository { get; private set; }
         protected IMapper Mapper { get; private set; }
@@ -18,6 +19,11 @@ namespace ServiceLayer
             Mapper = serviceProvider.GetService(typeof(IMapper)) as IMapper;
             Logger = serviceProvider.GetService(typeof(ILogger<ServiceBase<TEntity>>))
                 as ILogger<ServiceBase<TEntity>>;
+        }
+
+        public void Dispose()
+        {
+            Repository.Dispose();
         }
     }
 }
