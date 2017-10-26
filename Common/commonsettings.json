@@ -1,5 +1,3 @@
 ﻿{
-  "SessionCookieKey": "SessionToken",
-  "IdentityServerAddress": "{{IdentityServerAddress}}",
-  "PostsServerAddress": "{{PostsServerAddress}}"
+  "SessionCookieKey": "SessionToken"
 }
