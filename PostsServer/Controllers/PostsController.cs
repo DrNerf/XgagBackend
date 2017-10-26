@@ -34,7 +34,7 @@ namespace PostsServer
 
         //GET: api/Posts/5
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetPost(
+        public IActionResult GetPost(
             [FromRoute] int id)
         {
             if (!ModelState.IsValid)
