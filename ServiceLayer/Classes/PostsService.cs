@@ -49,6 +49,7 @@ namespace ServiceLayer
         {
             try
             {
+                throw new InvalidOperationException("dafuq mate");
                 var result = Repository.Get()
                         .Include(p => p.ImageImage)
                         .Include(p => p.Votes)
