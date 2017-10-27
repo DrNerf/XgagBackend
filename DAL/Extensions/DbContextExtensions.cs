@@ -21,6 +21,7 @@ namespace DAL
             IServiceCollection services)
         {
             services.AddTransient<IRepository<Post>, Repository<Post>>();
+            services.AddTransient<IRepository<AspNetUser>, Repository<AspNetUser>>();
         }
     }
 }

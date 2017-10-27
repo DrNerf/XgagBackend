@@ -7,6 +7,7 @@ namespace ServiceLayer
         public static void AddServices(this IServiceCollection services)
         {
             services.AddTransient<IPostsService, PostsService>();
+            services.AddTransient<IStatsService, StatsService>();
         }
     }
 }
