@@ -27,7 +27,7 @@ namespace PostsServer
         {
             var model = new PostsStatsModel();
             model.TopPosts = m_StatsService.GetTopPosts();
-            model.TopContributers = m_StatsService.GetTopContributors();
+            model.TopContributors = m_StatsService.GetTopContributors();
 
             return Ok(model);
         }
